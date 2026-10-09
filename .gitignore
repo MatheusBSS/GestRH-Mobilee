@@ -1,0 +1,16 @@
+# Arquivos locais e gerados
+.gradle/
+.kotlin/
+.idea/
+*.iml
+local.properties
+**/build/
+.externalNativeBuild/
+.cxx/
+.DS_Store
+*.jks
+*.keystore
+.env
+.env.*
+!.env.example
+captures/
