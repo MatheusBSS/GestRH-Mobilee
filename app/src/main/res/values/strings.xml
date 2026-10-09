@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GestRH Mobile</string>
+    <string name="home_subtitle">Controle de demandas de RH</string>
+    <string name="demands_title">Demandas</string>
+    <string name="empty_title">Nenhuma demanda cadastrada</string>
+    <string name="empty_description">Acompanhe aqui suas tarefas e os prazos de cada atividade.</string>
+</resources>
