@@ -8,11 +8,13 @@ Este é um projeto da disciplina **Programação Mobile Aplicada**, do curso de 
 
 ## O que temos por enquanto
 
-A tela inicial ainda mostra a mensagem “Nenhuma demanda cadastrada”. A parte de armazenamento já foi escrita com Room, mas ainda não está ligada à tela.
+A tela inicial tem o botão **Nova demanda**, que abre o formulário com título, observação, prazo e situação. O título e o prazo são obrigatórios; a data é escolhida no calendário. Prazos anteriores ao dia atual também são permitidos para registrar atividades já atrasadas.
 
-Cada demanda tem título, prazo, observação e situação. O banco oferece cadastro e consulta, e a lista é ordenada pelo prazo mais próximo. O título não pode ficar em branco. O vínculo com funcionários será acrescentado em outra etapa.
+O botão **Salvar demanda** grava os dados no Room. Durante a gravação, os campos e botões ficam bloqueados. Após a confirmação, o formulário mostra **Demanda salva no celular** e permite voltar ao início. Se houver falha, os campos são mantidos para uma nova tentativa. Cancelar retorna sem salvar.
 
-A compilação e os testes desta alteração ainda precisam ser executados no Android Studio. O próximo passo é construir o formulário de cadastro.
+A listagem dos registros será implementada no próximo commit. Neste momento, a tela inicial serve de acesso ao cadastro e não apresenta a quantidade de registros do banco.
+
+A compilação e os testes desta alteração ainda precisam ser confirmados no Android Studio.
 
 ## Como abrir o projeto
 
@@ -20,7 +22,7 @@ Vamos usar o **Android Studio**, com **Kotlin** para o código e **Jetpack Compo
 
 1. No Android Studio, escolha **Get from VCS** ou **Clone Repository**.
 2. Cole o endereço: `https://github.com/MatheusBSS/GestRH-Mobilee.git`.
-3. Para acessar esta versão antes de ela entrar na `main`, selecione a branch `armazenamento-local` no menu do Git.
+3. Para acessar esta versão antes de ela entrar na `main`, selecione a branch `cadastro-demandas` no menu do Git.
 4. Abra a pasta que contém `settings.gradle.kts` e aguarde a sincronização.
 5. No **SDK Manager**, instale o Android SDK Platform 35 e o Build-Tools 35.0.0. Nas configurações do Gradle, selecione um **JDK 17**.
 6. Escolha um emulador ou celular Android e clique em **Run**.
@@ -42,6 +44,16 @@ Dentro de `app/src/main/java/br/com/gestrh/mobile/`:
 Os textos ficam em `app/src/main/res/values/strings.xml`. As configurações do aplicativo ficam no `AndroidManifest.xml`, e as bibliotecas usadas pelo projeto são declaradas em `app/build.gradle.kts`.
 
 Os arquivos `gradlew`, `gradlew.bat` e a pasta `gradle/wrapper` permitem que os dois integrantes usem a mesma versão do Gradle. Eles fazem parte do projeto e devem permanecer no Git.
+
+## Cadastro de demandas
+
+| Arquivo em `apresentacao/` | Para que serve |
+| --- | --- |
+| `AplicativoGestRH.kt` | Alterna entre início e cadastro e conecta o formulário à lógica. |
+| `telas/TelaCadastroDemanda.kt` | Apresenta os campos, calendário e validações. |
+| `cadastro/CadastroDemandaViewModel.kt` | Salva no banco e acompanha sucesso, falha e gravação em andamento. |
+
+Os campos preenchidos são preservados ao girar a tela. A gravação usa o ciclo de vida do ViewModel para continuar durante essa mudança. Toques repetidos são bloqueados durante o salvamento e após a confirmação; um novo cadastro libera o próximo registro.
 
 ## Armazenamento local
 
@@ -89,3 +101,15 @@ No Linux ou macOS, use `./gradlew :app:assembleDebug`. O APK será gerado em `ap
 O repositório é público, então a professora pode consultá-lo pelo link, sem convite. Nos testes e nas capturas, vamos usar dados fictícios.
 
 O `.gitignore` já exclui arquivos gerados e configurações do computador, como `local.properties` e as pastas de build. Não envie senhas, chaves de assinatura ou dados reais de funcionários.
+
+## Conferir o cadastro
+
+1. Toque em Nova demanda e tente salvar sem preencher: o formulário deve indicar título e prazo obrigatórios.
+2. Preencha uma atividade fictícia, escolha prazo e situação e salve. Aguarde a confirmação.
+3. Volte ao início e abra outro cadastro: os campos devem estar vazios.
+4. Preencha e cancele: nada deve ser gravado.
+5. Gire a tela durante o preenchimento e confira os campos.
+6. Para consultar os registros antes da tela de listagem, abra o App Inspection / Database Inspector do Android Studio em dispositivo API 26 ou superior, com o aplicativo em execução, e consulte a tabela `demandas` do banco `gestrh.db`.
+7. Feche e reabra o aplicativo e confira os registros no inspector.
+
+Os testes de interface verificam campos obrigatórios e cancelamento. Os testes de banco existentes verificam persistência e consultas. Eles ainda não foram executados no ambiente de preparação; não registre aprovação antes de executá-los no dispositivo ou emulador.

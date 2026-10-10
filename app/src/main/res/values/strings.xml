@@ -22,4 +22,6 @@
     <string name="voltar_inicio">Voltar ao início</string>
     <string name="cancelar_cadastro">Cancelar</string>
     <string name="falha_salvamento">Não foi possível salvar. Seus dados continuam no formulário. Tente novamente.</string>
+    <string name="inicio_titulo">Organize suas atividades</string>
+    <string name="inicio_descricao">Cadastre uma demanda com título, prazo e situação.</string>
 </resources>

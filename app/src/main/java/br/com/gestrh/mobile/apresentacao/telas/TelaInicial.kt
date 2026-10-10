@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -20,7 +21,7 @@ import br.com.gestrh.mobile.R
 import br.com.gestrh.mobile.apresentacao.tema.TemaGestRH
 
 @Composable
-fun TelaInicial(modifier: Modifier = Modifier) {
+fun TelaInicial(modifier: Modifier = Modifier, aoNovaDemanda: () -> Unit = {}) {
     Scaffold(modifier = modifier) { innerPadding ->
         Column(
             modifier = Modifier
@@ -45,17 +46,20 @@ fun TelaInicial(modifier: Modifier = Modifier) {
                 text = stringResource(R.string.demands_title),
                 style = MaterialTheme.typography.titleLarge
             )
+            Button(onClick = aoNovaDemanda, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.nova_demanda))
+            }
             OutlinedCard(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier.padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.empty_title),
+                        text = stringResource(R.string.inicio_titulo),
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
-                        text = stringResource(R.string.empty_description),
+                        text = stringResource(R.string.inicio_descricao),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -30,6 +30,11 @@ ksp {
 }
 
 dependencies {
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.04.01"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("androidx.room:room-runtime:2.7.2")
     implementation("androidx.room:room-ktx:2.7.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")

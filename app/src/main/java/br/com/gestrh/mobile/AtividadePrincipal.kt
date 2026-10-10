@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import br.com.gestrh.mobile.apresentacao.telas.TelaInicial
+import br.com.gestrh.mobile.apresentacao.AplicativoGestRH
 import br.com.gestrh.mobile.apresentacao.tema.TemaGestRH
 
 class AtividadePrincipal : ComponentActivity() {
@@ -13,7 +13,7 @@ class AtividadePrincipal : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TemaGestRH {
-                TelaInicial()
+                AplicativoGestRH()
             }
         }
     }
