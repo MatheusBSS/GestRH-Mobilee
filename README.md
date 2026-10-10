@@ -8,9 +8,11 @@ Este é um projeto da disciplina **Programação Mobile Aplicada**, do curso de 
 
 ## O que temos por enquanto
 
-Esta primeira versão traz a base do projeto e uma tela inicial com a mensagem “Nenhuma demanda cadastrada”. Ela ainda não cadastra nem salva informações.
+A tela inicial ainda mostra a mensagem “Nenhuma demanda cadastrada”. A parte de armazenamento já foi escrita com Room, mas ainda não está ligada à tela.
 
-O próximo passo é criar o cadastro e a lista de demandas, usando o Room para guardar os registros no próprio celular. Depois, vamos acrescentar a edição, o acompanhamento dos prazos e o vínculo com funcionários.
+Cada demanda tem título, prazo, observação e situação. O banco oferece cadastro e consulta, e a lista é ordenada pelo prazo mais próximo. O título não pode ficar em branco. O vínculo com funcionários será acrescentado em outra etapa.
+
+A compilação e os testes desta alteração ainda precisam ser executados no Android Studio. O próximo passo é construir o formulário de cadastro.
 
 ## Como abrir o projeto
 
@@ -18,7 +20,7 @@ Vamos usar o **Android Studio**, com **Kotlin** para o código e **Jetpack Compo
 
 1. No Android Studio, escolha **Get from VCS** ou **Clone Repository**.
 2. Cole o endereço: `https://github.com/MatheusBSS/GestRH-Mobilee.git`.
-3. Para acessar esta versão antes de ela entrar na `main`, selecione a branch `estrutura-inicial` no menu do Git.
+3. Para acessar esta versão antes de ela entrar na `main`, selecione a branch `armazenamento-local` no menu do Git.
 4. Abra a pasta que contém `settings.gradle.kts` e aguarde a sincronização.
 5. No **SDK Manager**, instale o Android SDK Platform 35 e o Build-Tools 35.0.0. Nas configurações do Gradle, selecione um **JDK 17**.
 6. Escolha um emulador ou celular Android e clique em **Run**.
@@ -41,11 +43,32 @@ Os textos ficam em `app/src/main/res/values/strings.xml`. As configurações do 
 
 Os arquivos `gradlew`, `gradlew.bat` e a pasta `gradle/wrapper` permitem que os dois integrantes usem a mesma versão do Gradle. Eles fazem parte do projeto e devem permanecer no Git.
 
-## Como vamos dividir o trabalho
+## Armazenamento local
 
-**Matheus Martins Sena** ficará com as regras do aplicativo e o armazenamento local. **João Victor Duarte Santos** ficará com as telas. A integração e os testes serão feitos em conjunto.
+Os arquivos ficam em `app/src/main/java/br/com/gestrh/mobile/dados/`:
 
-Antes de desenvolver cada tela, vamos combinar os campos e as funções de que ela precisa. Assim, a interface e a parte de dados podem avançar sem depender de mudanças constantes uma na outra.
+| Arquivo | Para que serve |
+| --- | --- |
+| `modelos/Demanda.kt` | Define as informações de uma demanda. |
+| `modelos/SituacaoDemanda.kt` | Define as três situações possíveis. |
+| `banco/BancoDeDados.kt` | Abre o banco `gestrh.db` no armazenamento interno. |
+| `banco/DemandaDao.kt` | Contém as operações de gravação e consulta. |
+| `banco/ConversoresBanco.kt` | Converte datas e situações para armazenamento. |
+| `RepositorioDemandas.kt` | Valida o título e oferece as operações para as próximas telas. |
+
+O projeto usa Room 2.7.2 e KSP 2.1.20-1.0.32. Os prazos são datas sem horário. Para acessar os dados, crie um `RepositorioDemandas(BancoDeDados.obter(contexto).demandas())`. O cadastro deve ser chamado em uma corrotina; a consulta da lista retorna um `Flow` que acompanha as alterações.
+
+Há testes em `app/src/androidTest/` para gravação em arquivo, reabertura do banco, situações, ordem dos prazos e rejeição de título vazio. Eles usam um banco exclusivo de teste, removido ao terminar. Para executá-los com um celular ou emulador conectado:
+
+```powershell
+.\gradlew.bat :app:connectedDebugAndroidTest
+```
+
+Depois da primeira compilação, o Room exporta a estrutura do banco em `app/schemas/`. Versione o JSON gerado para apoiar futuras migrações. Não há migração destrutiva configurada.
+
+## Responsabilidade pelo desenvolvimento
+
+Matheus ficará responsável pela implementação das telas, regras, armazenamento e integração, organizando cada etapa em um commit separado.
 
 ## O que falta conferir nesta base
 
