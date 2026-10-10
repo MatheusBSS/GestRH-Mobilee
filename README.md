@@ -12,7 +12,7 @@ A tela inicial tem o botão **Nova demanda**, que abre o formulário com título
 
 O botão **Salvar demanda** grava os dados no Room. Durante a gravação, os campos e botões ficam bloqueados. Após a confirmação, o formulário mostra **Demanda salva no celular** e permite voltar ao início. Se houver falha, os campos são mantidos para uma nova tentativa. Cancelar retorna sem salvar.
 
-A listagem dos registros será implementada no próximo commit. Neste momento, a tela inicial serve de acesso ao cadastro e não apresenta a quantidade de registros do banco.
+A tela inicial lista as demandas por prazo, mostrando título, data, situação e observação. A lista acompanha as alterações do banco: ao salvar e voltar ao início, o registro deve aparecer automaticamente. Há mensagens distintas para carregamento, lista vazia e falha de consulta, com opção de tentar novamente.
 
 A compilação e os testes desta alteração ainda precisam ser confirmados no Android Studio.
 
@@ -22,7 +22,7 @@ Vamos usar o **Android Studio**, com **Kotlin** para o código e **Jetpack Compo
 
 1. No Android Studio, escolha **Get from VCS** ou **Clone Repository**.
 2. Cole o endereço: `https://github.com/MatheusBSS/GestRH-Mobilee.git`.
-3. Para acessar esta versão antes de ela entrar na `main`, selecione a branch `cadastro-demandas` no menu do Git.
+3. Para acessar esta versão antes de ela entrar na `main`, selecione a branch `sprint-01` no menu do Git.
 4. Abra a pasta que contém `settings.gradle.kts` e aguarde a sincronização.
 5. No **SDK Manager**, instale o Android SDK Platform 35 e o Build-Tools 35.0.0. Nas configurações do Gradle, selecione um **JDK 17**.
 6. Escolha um emulador ou celular Android e clique em **Run**.
@@ -52,6 +52,7 @@ Os arquivos `gradlew`, `gradlew.bat` e a pasta `gradle/wrapper` permitem que os 
 | `AplicativoGestRH.kt` | Alterna entre início e cadastro e conecta o formulário à lógica. |
 | `telas/TelaCadastroDemanda.kt` | Apresenta os campos, calendário e validações. |
 | `cadastro/CadastroDemandaViewModel.kt` | Salva no banco e acompanha sucesso, falha e gravação em andamento. |
+| `listagem/ListaDemandasViewModel.kt` | Observa as demandas e controla carregamento e falha da consulta. |
 
 Os campos preenchidos são preservados ao girar a tela. A gravação usa o ciclo de vida do ViewModel para continuar durante essa mudança. Toques repetidos são bloqueados durante o salvamento e após a confirmação; um novo cadastro libera o próximo registro.
 
@@ -109,7 +110,11 @@ O `.gitignore` já exclui arquivos gerados e configurações do computador, como
 3. Volte ao início e abra outro cadastro: os campos devem estar vazios.
 4. Preencha e cancele: nada deve ser gravado.
 5. Gire a tela durante o preenchimento e confira os campos.
-6. Para consultar os registros antes da tela de listagem, abra o App Inspection / Database Inspector do Android Studio em dispositivo API 26 ou superior, com o aplicativo em execução, e consulte a tabela `demandas` do banco `gestrh.db`.
-7. Feche e reabra o aplicativo e confira os registros no inspector.
+6. Confira na tela inicial o título, prazo, situação e observação salvos; cadastre uma segunda demanda com prazo anterior e confira a ordem.
+7. Feche e reabra o aplicativo e confira se os registros continuam na lista.
 
-Os testes de interface verificam campos obrigatórios e cancelamento. Os testes de banco existentes verificam persistência e consultas. Eles ainda não foram executados no ambiente de preparação; não registre aprovação antes de executá-los no dispositivo ou emulador.
+Os testes de interface verificam campos obrigatórios, cancelamento e o fluxo integrado de cadastro e consulta usando Room. Os testes de banco existentes verificam persistência e consultas. Eles ainda não foram executados no ambiente de preparação; não registre aprovação antes de executá-los no dispositivo ou emulador.
+
+## Acompanhar a Sprint 01
+
+Consulte [o registro da sprint](documentacao/Sprint-01.md) e [o roteiro de testes](documentacao/Testes-Sprint-01.md). O código está preparado; os testes Android permanecem pendentes até execução no dispositivo ou emulador.
