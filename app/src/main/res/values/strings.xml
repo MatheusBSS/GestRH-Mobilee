@@ -4,4 +4,22 @@
     <string name="demands_title">Demandas</string>
     <string name="empty_title">Nenhuma demanda cadastrada</string>
     <string name="empty_description">Acompanhe aqui suas tarefas e os prazos de cada atividade.</string>
+    <string name="nova_demanda">Nova demanda</string>
+    <string name="instrucao_cadastro">Informe o título e o prazo da atividade. A observação é opcional.</string>
+    <string name="titulo_demanda">Título *</string>
+    <string name="observacao_demanda">Observação (opcional)</string>
+    <string name="erro_titulo">Informe o título da demanda.</string>
+    <string name="selecionar_prazo">Selecionar prazo *</string>
+    <string name="prazo_selecionado">Prazo: %1$s</string>
+    <string name="erro_prazo">Selecione o prazo da demanda.</string>
+    <string name="situacao_demanda">Situação</string>
+    <string name="situacao_pendente">Pendente</string>
+    <string name="situacao_em_andamento">Em andamento</string>
+    <string name="situacao_concluida">Concluída</string>
+    <string name="salvar_demanda">Salvar demanda</string>
+    <string name="salvando_demanda">Salvando…</string>
+    <string name="demanda_salva">Demanda salva no celular.</string>
+    <string name="voltar_inicio">Voltar ao início</string>
+    <string name="cancelar_cadastro">Cancelar</string>
+    <string name="falha_salvamento">Não foi possível salvar. Seus dados continuam no formulário. Tente novamente.</string>
 </resources>
