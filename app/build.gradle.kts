@@ -30,6 +30,7 @@ ksp {
 }
 
 dependencies {
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     androidTestImplementation(platform("androidx.compose:compose-bom:2025.04.01"))

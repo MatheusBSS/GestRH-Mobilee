@@ -24,4 +24,8 @@
     <string name="falha_salvamento">Não foi possível salvar. Seus dados continuam no formulário. Tente novamente.</string>
     <string name="inicio_titulo">Organize suas atividades</string>
     <string name="inicio_descricao">Cadastre uma demanda com título, prazo e situação.</string>
+    <string name="carregando_demandas">Carregando demandas…</string>
+    <string name="falha_consulta">Não foi possível carregar as demandas.</string>
+    <string name="tentar_novamente">Tentar novamente</string>
+    <string name="situacao_lista">Situação: %1$s</string>
 </resources>
