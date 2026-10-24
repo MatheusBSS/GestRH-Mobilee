@@ -43,4 +43,11 @@
     <string name="carregando_funcionarios">Carregando funcionários…</string>
     <string name="falha_consulta_funcionarios">Não foi possível carregar os funcionários.</string>
     <string name="nenhum_funcionario">Nenhum funcionário cadastrado</string>
+    <string name="funcionario_opcional">Funcionário (opcional)</string>
+    <string name="selecionar_funcionario">Selecionar funcionário</string>
+    <string name="sem_funcionario">Sem funcionário</string>
+    <string name="remover_vinculo">Remover vínculo</string>
+    <string name="funcionario_indisponivel">Funcionário indisponível</string>
+    <string name="funcionario_lista">Funcionário: %1$s</string>
+    <string name="cadastre_funcionario_depois">Você pode salvar sem vínculo. Para associar uma pessoa, cadastre-a na tela Funcionários.</string>
 </resources>

@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import br.com.gestrh.mobile.dados.modelos.Demanda
 
-@Database(entities = [Demanda::class, Funcionario::class], version = 2, exportSchema = true)
+@Database(entities = [Demanda::class, Funcionario::class], version = 3, exportSchema = true)
 @TypeConverters(ConversoresBanco::class)
 abstract class BancoDeDados : RoomDatabase() {
     abstract fun demandas(): DemandaDao
@@ -23,6 +23,13 @@ abstract class BancoDeDados : RoomDatabase() {
             }
         }
 
+        val MIGRACAO_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE demandas ADD COLUMN funcionarioId INTEGER REFERENCES funcionarios(id) ON DELETE SET NULL")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_demandas_funcionarioId ON demandas (funcionarioId)")
+            }
+        }
+
         @Volatile
         private var instancia: BancoDeDados? = null
 
@@ -31,7 +38,7 @@ abstract class BancoDeDados : RoomDatabase() {
                 contexto.applicationContext,
                 BancoDeDados::class.java,
                 "gestrh.db"
-            ).addMigrations(MIGRACAO_1_2).build().also { instancia = it }
+            ).addMigrations(MIGRACAO_1_2, MIGRACAO_2_3).build().also { instancia = it }
         }
     }
 }

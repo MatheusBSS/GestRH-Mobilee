@@ -1,5 +1,6 @@
 package br.com.gestrh.mobile.apresentacao.telas
 
+import br.com.gestrh.mobile.apresentacao.funcionarios.EstadoFuncionarios
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,7 +34,8 @@ fun TelaInicial(
     aoNovaDemanda: () -> Unit = {},
     aoTentarNovamente: () -> Unit = {},
     aoEditarDemanda: (Long) -> Unit = {},
-    aoFuncionarios: () -> Unit = {}
+    aoFuncionarios: () -> Unit = {},
+    funcionarios: EstadoFuncionarios = EstadoFuncionarios(carregando = false)
 ) {
     Scaffold(modifier = modifier) { espacoDasBarras ->
         LazyColumn(
@@ -79,7 +81,7 @@ fun TelaInicial(
                     }
                 }
                 else -> items(estado.demandas, key = { it.id }) { demanda ->
-                    CartaoDemanda(demanda, aoEditar = { aoEditarDemanda(demanda.id) })
+                    CartaoDemanda(demanda, nomeFuncionario = funcionarios.funcionarios.firstOrNull { it.id == demanda.funcionarioId }?.nome, aoEditar = { aoEditarDemanda(demanda.id) })
                 }
             }
         }
@@ -87,7 +89,7 @@ fun TelaInicial(
 }
 
 @Composable
-private fun CartaoDemanda(demanda: Demanda, aoEditar: () -> Unit) {
+private fun CartaoDemanda(demanda: Demanda, nomeFuncionario: String?, aoEditar: () -> Unit) {
     val situacao = when (demanda.situacao) {
         SituacaoDemanda.PENDENTE -> R.string.situacao_pendente
         SituacaoDemanda.EM_ANDAMENTO -> R.string.situacao_em_andamento
@@ -99,6 +101,10 @@ private fun CartaoDemanda(demanda: Demanda, aoEditar: () -> Unit) {
             Text(stringResource(R.string.prazo_selecionado,
                 demanda.prazo.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
             Text(stringResource(R.string.situacao_lista, stringResource(situacao)))
+            if (demanda.funcionarioId != null) {
+                Text(stringResource(R.string.funcionario_lista,
+                    nomeFuncionario ?: stringResource(R.string.funcionario_indisponivel)))
+            }
             if (demanda.observacao.isNotBlank()) {
                 Text(demanda.observacao, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

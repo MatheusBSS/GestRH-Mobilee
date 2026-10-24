@@ -1,5 +1,6 @@
 package br.com.gestrh.mobile.apresentacao.telas
 
+import br.com.gestrh.mobile.apresentacao.funcionarios.EstadoFuncionarios
 import android.app.DatePickerDialog
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -36,17 +37,20 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun TelaCadastroDemanda(
-    aoSalvar: (String, LocalDate, String, SituacaoDemanda) -> Unit,
+    aoSalvar: (String, LocalDate, String, SituacaoDemanda, Long?) -> Unit,
     aoVoltar: () -> Unit,
     salvando: Boolean = false,
     salvo: Boolean = false,
     erroAoSalvar: String? = null,
-    demandaInicial: Demanda? = null
+    demandaInicial: Demanda? = null,
+    funcionarios: EstadoFuncionarios = EstadoFuncionarios(carregando = false),
+    aoRecarregarFuncionarios: () -> Unit = {}
 ) {
     var titulo by rememberSaveable { mutableStateOf(demandaInicial?.titulo.orEmpty()) }
     var observacao by rememberSaveable { mutableStateOf(demandaInicial?.observacao.orEmpty()) }
     var prazoEmDias by rememberSaveable { mutableStateOf<Long?>(demandaInicial?.prazo?.toEpochDay()) }
     var situacaoEscolhida by rememberSaveable { mutableStateOf((demandaInicial?.situacao ?: SituacaoDemanda.PENDENTE).name) }
+    var funcionarioId by rememberSaveable { mutableStateOf(demandaInicial?.funcionarioId) }
     var tentouSalvar by rememberSaveable { mutableStateOf(false) }
     val contexto = LocalContext.current
     val prazo = prazoEmDias?.let(LocalDate::ofEpochDay)
@@ -115,6 +119,11 @@ fun TelaCadastroDemanda(
                     enabled = editavel
                 )
             }
+            SeletorFuncionario(
+                estado = funcionarios, selecionado = funcionarioId,
+                habilitado = editavel, aoSelecionar = { funcionarioId = it },
+                aoTentarNovamente = aoRecarregarFuncionarios
+            )
             if (erroAoSalvar != null) Text(erroAoSalvar, color = MaterialTheme.colorScheme.error)
             if (salvo) {
                 Text(stringResource(if (demandaInicial == null) R.string.demanda_salva else R.string.alteracoes_salvas), color = MaterialTheme.colorScheme.primary)
@@ -125,7 +134,7 @@ fun TelaCadastroDemanda(
                     onClick = {
                         tentouSalvar = true
                         if (titulo.isNotBlank() && prazo != null) {
-                            aoSalvar(titulo, prazo, observacao, SituacaoDemanda.valueOf(situacaoEscolhida))
+                            aoSalvar(titulo, prazo, observacao, SituacaoDemanda.valueOf(situacaoEscolhida), funcionarioId)
                         }
                     }
                 ) {
@@ -142,5 +151,5 @@ fun TelaCadastroDemanda(
 @Preview(showBackground = true, locale = "pt-rBR")
 @Composable
 private fun PreviaCadastroDemanda() {
-    TemaGestRH { TelaCadastroDemanda(aoSalvar = { _, _, _, _ -> }, aoVoltar = {}) }
+    TemaGestRH { TelaCadastroDemanda(aoSalvar = { _, _, _, _, _ -> }, aoVoltar = {}) }
 }

@@ -47,12 +47,13 @@ fun AplicativoGestRH(
     var mostrandoFuncionarios by rememberSaveable { mutableStateOf(false) }
     var cadastrandoFuncionario by rememberSaveable { mutableStateOf(false) }
 
+    val fonteFuncionarios = remember(repositorioFuncionarios, contexto) {
+        repositorioFuncionarios ?: RepositorioFuncionarios(BancoDeDados.obter(contexto).funcionarios())
+    }
+    val funcionarios: FuncionariosViewModel = viewModel { FuncionariosViewModel(fonteFuncionarios) }
+    val estadoFuncionarios by funcionarios.estado.collectAsStateWithLifecycle()
+
     if (mostrandoFuncionarios) {
-        val fonteFuncionarios = remember(repositorioFuncionarios, contexto) {
-            repositorioFuncionarios ?: RepositorioFuncionarios(BancoDeDados.obter(contexto).funcionarios())
-        }
-        val funcionarios: FuncionariosViewModel = viewModel { FuncionariosViewModel(fonteFuncionarios) }
-        val estadoFuncionarios by funcionarios.estado.collectAsStateWithLifecycle()
         if (cadastrandoFuncionario) {
             TelaCadastroFuncionario(
                 aoSalvar = funcionarios::salvar,
@@ -80,18 +81,21 @@ fun AplicativoGestRH(
         }
         key(idEdicao) {
             TelaEdicaoDemanda(edicao, aoVoltar = { demandaEmEdicao = null },
-                aoTentarNovamente = { edicao.carregar(idEdicao) })
+                aoTentarNovamente = { edicao.carregar(idEdicao) },
+                funcionarios = estadoFuncionarios, aoRecarregarFuncionarios = funcionarios::carregar)
         }
     } else if (mostrandoCadastro) {
         TelaCadastroDemanda(
             aoSalvar = cadastro::salvar,
+            funcionarios = estadoFuncionarios,
+            aoRecarregarFuncionarios = funcionarios::carregar,
             aoVoltar = { mostrandoCadastro = false },
             salvando = cadastro.salvando,
             salvo = cadastro.salvo,
             erroAoSalvar = if (cadastro.falhou) stringResource(R.string.falha_salvamento) else null
         )
     } else {
-        TelaInicial(estado = estadoLista, aoTentarNovamente = lista::carregar,
+        TelaInicial(estado = estadoLista, funcionarios = estadoFuncionarios, aoTentarNovamente = lista::carregar,
             aoFuncionarios = { mostrandoFuncionarios = true },
             aoEditarDemanda = { id ->
                 edicao.carregar(id)

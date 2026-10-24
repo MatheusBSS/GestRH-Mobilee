@@ -12,8 +12,8 @@ interface DemandaDao {
     @Insert
     suspend fun inserir(demanda: Demanda): Long
 
-    @Query("UPDATE demandas SET titulo = :titulo, prazo = :prazo, observacao = :observacao, situacao = COALESCE(:situacao, situacao) WHERE id = :id")
-    suspend fun editar(id: Long, titulo: String, prazo: LocalDate, observacao: String, situacao: String?): Int
+    @Query("UPDATE demandas SET titulo = :titulo, prazo = :prazo, observacao = :observacao, situacao = COALESCE(:situacao, situacao), funcionarioId = CASE WHEN :atualizarVinculo THEN :funcionarioId ELSE funcionarioId END WHERE id = :id")
+    suspend fun editar(id: Long, titulo: String, prazo: LocalDate, observacao: String, situacao: String?, funcionarioId: Long?, atualizarVinculo: Boolean): Int
 
     @Query("SELECT * FROM demandas ORDER BY prazo ASC, id ASC")
     fun observarTodas(): Flow<List<Demanda>>

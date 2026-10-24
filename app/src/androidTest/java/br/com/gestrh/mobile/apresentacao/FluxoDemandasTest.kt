@@ -42,7 +42,7 @@ class FluxoDemandasTest {
         val contexto = ApplicationProvider.getApplicationContext<Context>()
         banco = Room.inMemoryDatabaseBuilder(contexto, BancoDeDados::class.java).build()
         repositorio = RepositorioDemandas(banco.demandas())
-        tela.setContent { TemaGestRH { AplicativoGestRH(repositorio) } }
+        tela.setContent { TemaGestRH { AplicativoGestRH(repositorio, br.com.gestrh.mobile.dados.RepositorioFuncionarios(banco.funcionarios())) } }
         aguardarTexto("Nenhuma demanda cadastrada")
     }
 
@@ -166,6 +166,55 @@ class FluxoDemandasTest {
         tela.onNodeWithText("Cancelar").performScrollTo().performClick()
         aguardarTexto("Situação: Concluída")
         runBlocking { assertEquals(SituacaoDemanda.CONCLUIDA, repositorio.buscarDemanda(id)?.situacao) }
+    }
+
+    @Test
+    fun cadastraComFuncionarioTrocaCancelaERemoveVinculo() {
+        val funcionarios = br.com.gestrh.mobile.dados.RepositorioFuncionarios(banco.funcionarios())
+        val ana = runBlocking { funcionarios.cadastrar("Ana exemplo") }
+        val bruno = runBlocking { funcionarios.cadastrar("Bruno exemplo") }
+        tela.onNodeWithText("Nova demanda").performClick()
+        tela.onNodeWithText("Título *").performTextInput("Férias vinculadas")
+        tela.onNodeWithText("Selecionar prazo *").performScrollTo().performClick()
+        onView(withId(android.R.id.button1)).perform(click())
+        tela.onNodeWithText("Sem funcionário").performScrollTo().performClick()
+        aguardarTexto("Ana exemplo")
+        tela.onNodeWithText("Ana exemplo").performClick()
+        tela.onNodeWithText("Salvar demanda").performScrollTo().performClick()
+        aguardarTexto("Demanda salva no celular.")
+        tela.onNodeWithText("Voltar ao início").performScrollTo().performClick()
+        aguardarTexto("Funcionário: Ana exemplo")
+        val id = runBlocking {
+            val demanda = repositorio.observarDemandas().first().single()
+            assertEquals(ana, demanda.funcionarioId)
+            demanda.id
+        }
+        tela.onNodeWithText("Férias vinculadas").performScrollTo().performClick()
+        aguardarTexto("Salvar alterações")
+        tela.onNodeWithText("Ana exemplo").performScrollTo().performClick()
+        tela.onNodeWithText("Bruno exemplo").performClick()
+        tela.onNodeWithText("Salvar alterações").performScrollTo().performClick()
+        aguardarTexto("Alterações salvas no celular.")
+        tela.onNodeWithText("Voltar ao início").performScrollTo().performClick()
+        aguardarTexto("Funcionário: Bruno exemplo")
+        tela.onNodeWithText("Férias vinculadas").performScrollTo().performClick()
+        aguardarTexto("Salvar alterações")
+        tela.onNodeWithText("Remover vínculo").performScrollTo().performClick()
+        tela.onNodeWithText("Cancelar").performScrollTo().performClick()
+        aguardarTexto("Funcionário: Bruno exemplo")
+        runBlocking { assertEquals(bruno, repositorio.buscarDemanda(id)?.funcionarioId) }
+        tela.onNodeWithText("Férias vinculadas").performScrollTo().performClick()
+        aguardarTexto("Salvar alterações")
+        tela.onNodeWithText("Remover vínculo").performScrollTo().performClick()
+        tela.onNodeWithText("Salvar alterações").performScrollTo().performClick()
+        aguardarTexto("Alterações salvas no celular.")
+        tela.onNodeWithText("Voltar ao início").performScrollTo().performClick()
+        aguardarTexto("Férias vinculadas")
+        tela.onNodeWithText("Funcionário: Bruno exemplo").assertDoesNotExist()
+        runBlocking {
+            assertEquals(null, repositorio.buscarDemanda(id)?.funcionarioId)
+            assertEquals(1, repositorio.observarDemandas().first().size)
+        }
     }
 
 }

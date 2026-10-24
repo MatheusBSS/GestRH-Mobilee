@@ -1,5 +1,6 @@
 package br.com.gestrh.mobile.apresentacao.telas
 
+import br.com.gestrh.mobile.apresentacao.funcionarios.EstadoFuncionarios
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,12 +22,16 @@ import br.com.gestrh.mobile.apresentacao.edicao.EdicaoDemandaViewModel
 fun TelaEdicaoDemanda(
     edicao: EdicaoDemandaViewModel,
     aoVoltar: () -> Unit,
-    aoTentarNovamente: () -> Unit
+    aoTentarNovamente: () -> Unit,
+    funcionarios: EstadoFuncionarios,
+    aoRecarregarFuncionarios: () -> Unit
 ) {
     val demanda = edicao.demanda
     if (demanda != null) {
         TelaCadastroDemanda(
             demandaInicial = demanda,
+            funcionarios = funcionarios,
+            aoRecarregarFuncionarios = aoRecarregarFuncionarios,
             aoSalvar = edicao::salvar,
             aoVoltar = aoVoltar,
             salvando = edicao.salvando,

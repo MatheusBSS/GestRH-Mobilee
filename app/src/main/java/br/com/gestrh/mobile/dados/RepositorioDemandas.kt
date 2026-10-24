@@ -16,10 +16,12 @@ class RepositorioDemandas(private val consultas: DemandaDao) {
         titulo: String,
         prazo: LocalDate,
         observacao: String,
-        situacao: SituacaoDemanda? = null
+        situacao: SituacaoDemanda? = null,
+        funcionarioId: Long? = null,
+        atualizarVinculo: Boolean = false
     ) {
         require(titulo.isNotBlank()) { "Informe o título da demanda." }
-        check(consultas.editar(id, titulo.trim(), prazo, observacao.trim(), situacao?.name) == 1) {
+        check(consultas.editar(id, titulo.trim(), prazo, observacao.trim(), situacao?.name, funcionarioId, atualizarVinculo) == 1) {
             "A demanda não está mais disponível."
         }
     }
@@ -28,7 +30,8 @@ class RepositorioDemandas(private val consultas: DemandaDao) {
         titulo: String,
         prazo: LocalDate,
         observacao: String = "",
-        situacao: SituacaoDemanda = SituacaoDemanda.PENDENTE
+        situacao: SituacaoDemanda = SituacaoDemanda.PENDENTE,
+        funcionarioId: Long? = null
     ): Long {
         val tituloAjustado = titulo.trim()
         require(tituloAjustado.isNotEmpty()) { "Informe o título da demanda." }
@@ -37,7 +40,8 @@ class RepositorioDemandas(private val consultas: DemandaDao) {
                 titulo = tituloAjustado,
                 prazo = prazo,
                 observacao = observacao.trim(),
-                situacao = situacao
+                situacao = situacao,
+                funcionarioId = funcionarioId
             )
         )
     }
