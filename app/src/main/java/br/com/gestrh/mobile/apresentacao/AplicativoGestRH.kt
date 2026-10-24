@@ -1,5 +1,9 @@
 package br.com.gestrh.mobile.apresentacao
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
+import br.com.gestrh.mobile.apresentacao.edicao.EdicaoDemandaViewModel
+import br.com.gestrh.mobile.apresentacao.telas.TelaEdicaoDemanda
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -29,7 +33,21 @@ fun AplicativoGestRH(repositorio: RepositorioDemandas? = null) {
     val estadoLista by lista.estado.collectAsStateWithLifecycle()
     var mostrandoCadastro by rememberSaveable { mutableStateOf(false) }
 
-    if (mostrandoCadastro) {
+    val edicao: EdicaoDemandaViewModel = viewModel { EdicaoDemandaViewModel(fonteDados) }
+    var demandaEmEdicao by rememberSaveable { mutableStateOf<Long?>(null) }
+    val idEdicao = demandaEmEdicao
+
+    if (idEdicao != null) {
+        LaunchedEffect(idEdicao) {
+            if (edicao.demanda?.id != idEdicao && !edicao.carregando && !edicao.falhaConsulta) {
+                edicao.carregar(idEdicao)
+            }
+        }
+        key(idEdicao) {
+            TelaEdicaoDemanda(edicao, aoVoltar = { demandaEmEdicao = null },
+                aoTentarNovamente = { edicao.carregar(idEdicao) })
+        }
+    } else if (mostrandoCadastro) {
         TelaCadastroDemanda(
             aoSalvar = cadastro::salvar,
             aoVoltar = { mostrandoCadastro = false },
@@ -38,7 +56,11 @@ fun AplicativoGestRH(repositorio: RepositorioDemandas? = null) {
             erroAoSalvar = if (cadastro.falhou) stringResource(R.string.falha_salvamento) else null
         )
     } else {
-        TelaInicial(estado = estadoLista, aoTentarNovamente = lista::carregar, aoNovaDemanda = {
+        TelaInicial(estado = estadoLista, aoTentarNovamente = lista::carregar,
+            aoEditarDemanda = { id ->
+                edicao.carregar(id)
+                demandaEmEdicao = id
+            }, aoNovaDemanda = {
             cadastro.iniciarCadastro()
             mostrandoCadastro = true
         })

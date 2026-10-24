@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.com.gestrh.mobile.R
 import br.com.gestrh.mobile.apresentacao.tema.TemaGestRH
+import br.com.gestrh.mobile.dados.modelos.Demanda
 import br.com.gestrh.mobile.dados.modelos.SituacaoDemanda
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -39,12 +40,13 @@ fun TelaCadastroDemanda(
     aoVoltar: () -> Unit,
     salvando: Boolean = false,
     salvo: Boolean = false,
-    erroAoSalvar: String? = null
+    erroAoSalvar: String? = null,
+    demandaInicial: Demanda? = null
 ) {
-    var titulo by rememberSaveable { mutableStateOf("") }
-    var observacao by rememberSaveable { mutableStateOf("") }
-    var prazoEmDias by rememberSaveable { mutableStateOf<Long?>(null) }
-    var situacaoEscolhida by rememberSaveable { mutableStateOf(SituacaoDemanda.PENDENTE.name) }
+    var titulo by rememberSaveable { mutableStateOf(demandaInicial?.titulo.orEmpty()) }
+    var observacao by rememberSaveable { mutableStateOf(demandaInicial?.observacao.orEmpty()) }
+    var prazoEmDias by rememberSaveable { mutableStateOf<Long?>(demandaInicial?.prazo?.toEpochDay()) }
+    var situacaoEscolhida by rememberSaveable { mutableStateOf((demandaInicial?.situacao ?: SituacaoDemanda.PENDENTE).name) }
     var tentouSalvar by rememberSaveable { mutableStateOf(false) }
     val contexto = LocalContext.current
     val prazo = prazoEmDias?.let(LocalDate::ofEpochDay)
@@ -60,7 +62,7 @@ fun TelaCadastroDemanda(
                 .imePadding().verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(stringResource(R.string.nova_demanda), style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(if (demandaInicial == null) R.string.nova_demanda else R.string.editar_demanda), style = MaterialTheme.typography.headlineMedium)
             Text(stringResource(R.string.instrucao_cadastro))
             OutlinedTextField(
                 value = titulo,
@@ -115,7 +117,7 @@ fun TelaCadastroDemanda(
             }
             if (erroAoSalvar != null) Text(erroAoSalvar, color = MaterialTheme.colorScheme.error)
             if (salvo) {
-                Text(stringResource(R.string.demanda_salva), color = MaterialTheme.colorScheme.primary)
+                Text(stringResource(if (demandaInicial == null) R.string.demanda_salva else R.string.alteracoes_salvas), color = MaterialTheme.colorScheme.primary)
             } else {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
@@ -127,7 +129,7 @@ fun TelaCadastroDemanda(
                         }
                     }
                 ) {
-                    Text(stringResource(if (salvando) R.string.salvando_demanda else R.string.salvar_demanda))
+                    Text(stringResource(if (salvando) R.string.salvando_demanda else if (demandaInicial != null) R.string.salvar_alteracoes else R.string.salvar_demanda))
                 }
             }
             TextButton(onClick = aoVoltar, enabled = !salvando, modifier = Modifier.fillMaxWidth()) {
