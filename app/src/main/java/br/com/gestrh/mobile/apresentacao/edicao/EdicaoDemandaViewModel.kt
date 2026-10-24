@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.gestrh.mobile.dados.RepositorioDemandas
+import br.com.gestrh.mobile.dados.modelos.SituacaoDemanda
 import br.com.gestrh.mobile.dados.modelos.Demanda
 import java.time.LocalDate
 import kotlinx.coroutines.CancellationException
@@ -47,14 +48,14 @@ class EdicaoDemandaViewModel(private val repositorio: RepositorioDemandas) : Vie
         }
     }
 
-    fun salvar(titulo: String, prazo: LocalDate, observacao: String) {
+    fun salvar(titulo: String, prazo: LocalDate, observacao: String, situacao: SituacaoDemanda) {
         val atual = demanda ?: return
         if (salvando || salvo) return
         salvando = true
         falhaSalvamento = false
         viewModelScope.launch {
             try {
-                repositorio.editar(atual.id, titulo, prazo, observacao)
+                repositorio.editar(atual.id, titulo, prazo, observacao, situacao)
                 salvo = true
             } catch (cancelamento: CancellationException) {
                 throw cancelamento

@@ -27,7 +27,7 @@ fun TelaEdicaoDemanda(
     if (demanda != null) {
         TelaCadastroDemanda(
             demandaInicial = demanda,
-            aoSalvar = { titulo, prazo, observacao, _ -> edicao.salvar(titulo, prazo, observacao) },
+            aoSalvar = edicao::salvar,
             aoVoltar = aoVoltar,
             salvando = edicao.salvando,
             salvo = edicao.salvo,

@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.performTextInput
 import androidx.room.Room
@@ -136,6 +137,35 @@ class FluxoDemandasTest {
         tela.onNodeWithText("Manter demanda").performClick()
         aguardarTexto("Salvar alterações")
         tela.onNodeWithText("Título *").assertTextContains("Manter demanda")
+    }
+
+    @Test
+    fun alteraSituacaoEPermiteCancelarNovaAlteracao() {
+        val id = runBlocking {
+            repositorio.cadastrar("Conferir folha", LocalDate.of(2026, 10, 25), "Conferir informações")
+        }
+        aguardarTexto("Conferir folha")
+        tela.onNodeWithText("Conferir folha").performClick()
+        aguardarTexto("Salvar alterações")
+        tela.onNodeWithText("Pendente").performScrollTo().assertIsSelected()
+        tela.onNodeWithText("Concluída").performScrollTo().performClick()
+        tela.onNodeWithText("Salvar alterações").performScrollTo().performClick()
+        aguardarTexto("Alterações salvas no celular.")
+        tela.onNodeWithText("Voltar ao início").performScrollTo().performClick()
+        aguardarTexto("Situação: Concluída")
+        runBlocking {
+            val registros = repositorio.observarDemandas().first()
+            assertEquals(1, registros.size)
+            assertEquals(id, registros.single().id)
+            assertEquals(SituacaoDemanda.CONCLUIDA, registros.single().situacao)
+        }
+        tela.onNodeWithText("Conferir folha").performClick()
+        aguardarTexto("Salvar alterações")
+        tela.onNodeWithText("Concluída").performScrollTo().assertIsSelected()
+        tela.onNodeWithText("Em andamento").performScrollTo().performClick()
+        tela.onNodeWithText("Cancelar").performScrollTo().performClick()
+        aguardarTexto("Situação: Concluída")
+        runBlocking { assertEquals(SituacaoDemanda.CONCLUIDA, repositorio.buscarDemanda(id)?.situacao) }
     }
 
 }

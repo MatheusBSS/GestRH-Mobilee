@@ -112,7 +112,7 @@ fun TelaCadastroDemanda(
                     selected = situacaoEscolhida == situacao.name,
                     onClick = { situacaoEscolhida = situacao.name },
                     label = { Text(stringResource(rotulo)) },
-                    enabled = editavel && demandaInicial == null
+                    enabled = editavel
                 )
             }
             if (erroAoSalvar != null) Text(erroAoSalvar, color = MaterialTheme.colorScheme.error)

@@ -116,4 +116,36 @@ class PersistenciaDemandasTest {
         }
     }
 
+    @Test
+    fun alteraTodasAsSituacoesEPersisteDepoisDeReabrir() = runBlocking {
+        val prazo = LocalDate.of(2026, 10, 25)
+        val id = repositorio.cadastrar("Folha", prazo, "Conferir")
+        val outroId = repositorio.cadastrar("Férias", prazo)
+        val outra = repositorio.buscarDemanda(outroId)
+        listOf(SituacaoDemanda.EM_ANDAMENTO, SituacaoDemanda.CONCLUIDA, SituacaoDemanda.PENDENTE).forEach { situacao ->
+            repositorio.editar(id, "Folha", prazo, "Conferir", situacao)
+            banco.close()
+            abrirBanco()
+            val demanda = requireNotNull(repositorio.buscarDemanda(id))
+            assertEquals(situacao, demanda.situacao)
+            assertEquals("Folha", demanda.titulo)
+            assertEquals(prazo, demanda.prazo)
+            assertEquals("Conferir", demanda.observacao)
+            assertEquals(2, repositorio.observarDemandas().first().size)
+            assertEquals(outra, repositorio.buscarDemanda(outroId))
+        }
+    }
+
+    @Test
+    fun tituloInvalidoNaoAlteraSituacao() = runBlocking {
+        val id = repositorio.cadastrar("Original", LocalDate.of(2026, 10, 25))
+        val original = repositorio.buscarDemanda(id)
+        try {
+            repositorio.editar(id, "  ", LocalDate.now(), "Inválida", SituacaoDemanda.CONCLUIDA)
+            fail("Deveria rejeitar título vazio sem alterar a situação")
+        } catch (esperado: IllegalArgumentException) {
+            assertEquals(original, repositorio.buscarDemanda(id))
+        }
+    }
+
 }
