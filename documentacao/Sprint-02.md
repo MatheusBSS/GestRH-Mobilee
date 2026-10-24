@@ -14,6 +14,14 @@ O segundo commit habilita a seleção de situação na edição. Título, prazo,
 
 Foram acrescentados testes para todas as situações após reabrir o banco, preservação de outros registros, rejeição de alterações com título vazio e cancelamento da troca de situação na interface. Esses testes Android ainda não foram executados neste ambiente.
 
+## Cadastro e consulta de funcionários
+
+O terceiro commit acrescenta o acesso Funcionários na tela inicial. A listagem mostra nome e observação quando preenchida, com estados de carregamento, lista vazia e erro com nova tentativa. Novo funcionário abre o formulário com nome obrigatório e observação opcional. Cancelar não grava; salvar apresenta confirmação e permite retornar à lista. O vínculo com demandas fica para o próximo commit.
+
+O banco passa da versão 1 para a versão 2. A migração `MIGRACAO_1_2` cria somente a tabela `funcionarios`, preservando a tabela e os IDs das demandas. Não há recriação destrutiva. Na próxima compilação, conferir e versionar os esquemas gerados pelo Room em `app/schemas`.
+
+Foram escritos testes de cadastro, nome obrigatório, consulta, cancelamento, recuperação após reabertura e migração de um banco com estrutura da versão 1. Os testes de migração abrem a versão atual com Room para validar o esquema, consultam a demanda antiga e verificam novos cadastros. A execução Android continua pendente. A instrução SQL da migração foi exercitada em SQLite isolado, confirmando a preservação das demandas e dos IDs, o cadastro de funcionários e a recuperação após reabertura; essa conferência não substitui a validação do Room no Android.
+
 ## Verificação
 
 Foram acrescentados testes Android para edição sem duplicação, preservação da situação e de outros registros, recuperação após reabrir o banco, rejeição de título vazio e ID inexistente, preenchimento do formulário e cancelamento. Os testes anteriores de cadastro permanecem no projeto.
@@ -39,11 +47,15 @@ Conferir manualmente:
 8. Alterar uma demanda de Pendente para Em andamento e depois Concluída; salvar e conferir a lista a cada mudança.
 9. Reabrir o aplicativo e conferir a situação; retornar uma demanda concluída para Pendente.
 10. Selecionar outra situação e cancelar; conferir que a anterior foi mantida.
+11. Abrir Funcionários, tentar salvar sem nome, cadastrar com e sem observação e conferir a lista.
+12. Cancelar um cadastro preenchido e confirmar que não foi salvo; abrir novo cadastro e conferir os campos vazios.
+13. Fechar e reabrir o aplicativo para conferir funcionários e demandas.
+14. Instalar a atualização sobre a versão anterior, com a mesma assinatura e sem desinstalar: conferir a preservação das demandas e o cadastro de funcionários.
+15. Conferir teclado, rolagem e rotação no formulário de funcionário.
 
 Registrar dispositivo, Android, data, commit, resultados e capturas após a execução.
 
 ## Próximas etapas
 
-- Cadastro e consulta de funcionários.
 - Vínculo opcional entre demanda e funcionário, com migração que preserve os dados.
 - Testes integrados e publicação do APK de testes no GitHub Releases.

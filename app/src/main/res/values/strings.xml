@@ -33,4 +33,14 @@
     <string name="alteracoes_salvas">Alterações salvas no celular.</string>
     <string name="carregando_demanda">Carregando demanda…</string>
     <string name="falha_carregar_demanda">Não foi possível abrir a demanda. Ela pode não estar mais disponível.</string>
+    <string name="funcionarios">Funcionários</string>
+    <string name="novo_funcionario">Novo funcionário</string>
+    <string name="nome_funcionario">Nome *</string>
+    <string name="erro_nome_funcionario">Informe o nome do funcionário.</string>
+    <string name="salvar_funcionario">Salvar funcionário</string>
+    <string name="funcionario_salvo">Funcionário salvo no celular.</string>
+    <string name="voltar_funcionarios">Voltar aos funcionários</string>
+    <string name="carregando_funcionarios">Carregando funcionários…</string>
+    <string name="falha_consulta_funcionarios">Não foi possível carregar os funcionários.</string>
+    <string name="nenhum_funcionario">Nenhum funcionário cadastrado</string>
 </resources>

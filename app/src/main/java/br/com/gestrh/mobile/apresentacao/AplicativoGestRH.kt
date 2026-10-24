@@ -1,5 +1,9 @@
 package br.com.gestrh.mobile.apresentacao
 
+import br.com.gestrh.mobile.dados.RepositorioFuncionarios
+import br.com.gestrh.mobile.apresentacao.funcionarios.FuncionariosViewModel
+import br.com.gestrh.mobile.apresentacao.telas.TelaFuncionarios
+import br.com.gestrh.mobile.apresentacao.telas.TelaCadastroFuncionario
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import br.com.gestrh.mobile.apresentacao.edicao.EdicaoDemandaViewModel
@@ -23,7 +27,10 @@ import br.com.gestrh.mobile.dados.RepositorioDemandas
 import br.com.gestrh.mobile.dados.banco.BancoDeDados
 
 @Composable
-fun AplicativoGestRH(repositorio: RepositorioDemandas? = null) {
+fun AplicativoGestRH(
+    repositorio: RepositorioDemandas? = null,
+    repositorioFuncionarios: RepositorioFuncionarios? = null
+) {
     val contexto = LocalContext.current.applicationContext
     val fonteDados = remember(repositorio, contexto) {
         repositorio ?: RepositorioDemandas(BancoDeDados.obter(contexto).demandas())
@@ -37,7 +44,35 @@ fun AplicativoGestRH(repositorio: RepositorioDemandas? = null) {
     var demandaEmEdicao by rememberSaveable { mutableStateOf<Long?>(null) }
     val idEdicao = demandaEmEdicao
 
-    if (idEdicao != null) {
+    var mostrandoFuncionarios by rememberSaveable { mutableStateOf(false) }
+    var cadastrandoFuncionario by rememberSaveable { mutableStateOf(false) }
+
+    if (mostrandoFuncionarios) {
+        val fonteFuncionarios = remember(repositorioFuncionarios, contexto) {
+            repositorioFuncionarios ?: RepositorioFuncionarios(BancoDeDados.obter(contexto).funcionarios())
+        }
+        val funcionarios: FuncionariosViewModel = viewModel { FuncionariosViewModel(fonteFuncionarios) }
+        val estadoFuncionarios by funcionarios.estado.collectAsStateWithLifecycle()
+        if (cadastrandoFuncionario) {
+            TelaCadastroFuncionario(
+                aoSalvar = funcionarios::salvar,
+                aoVoltar = { cadastrandoFuncionario = false },
+                salvando = funcionarios.salvando,
+                salvo = funcionarios.salvo,
+                falhou = funcionarios.falhaSalvamento
+            )
+        } else {
+            TelaFuncionarios(
+                estado = estadoFuncionarios,
+                aoNovoFuncionario = {
+                    funcionarios.iniciarCadastro()
+                    cadastrandoFuncionario = true
+                },
+                aoTentarNovamente = funcionarios::carregar,
+                aoVoltar = { mostrandoFuncionarios = false }
+            )
+        }
+    } else if (idEdicao != null) {
         LaunchedEffect(idEdicao) {
             if (edicao.demanda?.id != idEdicao && !edicao.carregando && !edicao.falhaConsulta) {
                 edicao.carregar(idEdicao)
@@ -57,6 +92,7 @@ fun AplicativoGestRH(repositorio: RepositorioDemandas? = null) {
         )
     } else {
         TelaInicial(estado = estadoLista, aoTentarNovamente = lista::carregar,
+            aoFuncionarios = { mostrandoFuncionarios = true },
             aoEditarDemanda = { id ->
                 edicao.carregar(id)
                 demandaEmEdicao = id

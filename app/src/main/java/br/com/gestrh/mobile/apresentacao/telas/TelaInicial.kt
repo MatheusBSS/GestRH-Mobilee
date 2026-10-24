@@ -32,7 +32,8 @@ fun TelaInicial(
     estado: EstadoListaDemandas = EstadoListaDemandas(carregando = false),
     aoNovaDemanda: () -> Unit = {},
     aoTentarNovamente: () -> Unit = {},
-    aoEditarDemanda: (Long) -> Unit = {}
+    aoEditarDemanda: (Long) -> Unit = {},
+    aoFuncionarios: () -> Unit = {}
 ) {
     Scaffold(modifier = modifier) { espacoDasBarras ->
         LazyColumn(
@@ -48,6 +49,11 @@ fun TelaInicial(
             item {
                 Button(onClick = aoNovaDemanda, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.nova_demanda))
+                }
+            }
+            item {
+                androidx.compose.material3.OutlinedButton(onClick = aoFuncionarios, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.funcionarios))
                 }
             }
             item {
