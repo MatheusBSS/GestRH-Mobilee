@@ -11,6 +11,13 @@ class RepositorioDemandas(private val consultas: DemandaDao) {
 
     suspend fun buscarDemanda(id: Long): Demanda? = consultas.buscarPorId(id)
 
+    suspend fun editar(id: Long, titulo: String, prazo: LocalDate, observacao: String) {
+        require(titulo.isNotBlank()) { "Informe o título da demanda." }
+        check(consultas.editar(id, titulo.trim(), prazo, observacao.trim()) == 1) {
+            "A demanda não está mais disponível."
+        }
+    }
+
     suspend fun cadastrar(
         titulo: String,
         prazo: LocalDate,

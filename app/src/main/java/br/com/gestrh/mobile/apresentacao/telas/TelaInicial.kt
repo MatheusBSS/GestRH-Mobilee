@@ -31,7 +31,8 @@ fun TelaInicial(
     modifier: Modifier = Modifier,
     estado: EstadoListaDemandas = EstadoListaDemandas(carregando = false),
     aoNovaDemanda: () -> Unit = {},
-    aoTentarNovamente: () -> Unit = {}
+    aoTentarNovamente: () -> Unit = {},
+    aoEditarDemanda: (Long) -> Unit = {}
 ) {
     Scaffold(modifier = modifier) { espacoDasBarras ->
         LazyColumn(
@@ -72,7 +73,7 @@ fun TelaInicial(
                     }
                 }
                 else -> items(estado.demandas, key = { it.id }) { demanda ->
-                    CartaoDemanda(demanda)
+                    CartaoDemanda(demanda, aoEditar = { aoEditarDemanda(demanda.id) })
                 }
             }
         }
@@ -80,13 +81,13 @@ fun TelaInicial(
 }
 
 @Composable
-private fun CartaoDemanda(demanda: Demanda) {
+private fun CartaoDemanda(demanda: Demanda, aoEditar: () -> Unit) {
     val situacao = when (demanda.situacao) {
         SituacaoDemanda.PENDENTE -> R.string.situacao_pendente
         SituacaoDemanda.EM_ANDAMENTO -> R.string.situacao_em_andamento
         SituacaoDemanda.CONCLUIDA -> R.string.situacao_concluida
     }
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+    OutlinedCard(onClick = aoEditar, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(demanda.titulo, style = MaterialTheme.typography.titleMedium)
             Text(stringResource(R.string.prazo_selecionado,
