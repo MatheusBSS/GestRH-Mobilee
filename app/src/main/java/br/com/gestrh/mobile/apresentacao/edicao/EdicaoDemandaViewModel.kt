@@ -48,14 +48,14 @@ class EdicaoDemandaViewModel(private val repositorio: RepositorioDemandas) : Vie
         }
     }
 
-    fun salvar(titulo: String, prazo: LocalDate, observacao: String, situacao: SituacaoDemanda) {
+    fun salvar(titulo: String, prazo: LocalDate, observacao: String, situacao: SituacaoDemanda, funcionarioId: Long?) {
         val atual = demanda ?: return
         if (salvando || salvo) return
         salvando = true
         falhaSalvamento = false
         viewModelScope.launch {
             try {
-                repositorio.editar(atual.id, titulo, prazo, observacao, situacao)
+                repositorio.editar(atual.id, titulo, prazo, observacao, situacao, funcionarioId, atualizarVinculo = true)
                 salvo = true
             } catch (cancelamento: CancellationException) {
                 throw cancelamento

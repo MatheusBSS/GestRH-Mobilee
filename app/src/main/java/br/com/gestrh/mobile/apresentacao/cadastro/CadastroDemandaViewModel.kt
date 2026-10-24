@@ -25,13 +25,13 @@ class CadastroDemandaViewModel(private val repositorio: RepositorioDemandas) : V
         falhou = false
     }
 
-    fun salvar(titulo: String, prazo: LocalDate, observacao: String, situacao: SituacaoDemanda) {
+    fun salvar(titulo: String, prazo: LocalDate, observacao: String, situacao: SituacaoDemanda, funcionarioId: Long?) {
         if (salvando || salvo) return
         salvando = true
         falhou = false
         viewModelScope.launch {
             try {
-                repositorio.cadastrar(titulo, prazo, observacao, situacao)
+                repositorio.cadastrar(titulo, prazo, observacao, situacao, funcionarioId)
                 salvo = true
             } catch (cancelamento: CancellationException) {
                 throw cancelamento

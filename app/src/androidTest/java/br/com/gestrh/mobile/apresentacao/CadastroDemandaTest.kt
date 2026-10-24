@@ -20,7 +20,7 @@ class CadastroDemandaTest {
         var envios = 0
         tela.setContent {
             TemaGestRH {
-                TelaCadastroDemanda(aoSalvar = { _, _, _, _ -> envios++ }, aoVoltar = {})
+                TelaCadastroDemanda(aoSalvar = { _, _, _, _, _ -> envios++ }, aoVoltar = {})
             }
         }
         tela.onNodeWithText("Salvar demanda").performScrollTo().performClick()
@@ -35,7 +35,7 @@ class CadastroDemandaTest {
         var retornos = 0
         tela.setContent {
             TemaGestRH {
-                TelaCadastroDemanda(aoSalvar = { _, _, _, _ -> envios++ }, aoVoltar = { retornos++ })
+                TelaCadastroDemanda(aoSalvar = { _, _, _, _, _ -> envios++ }, aoVoltar = { retornos++ })
             }
         }
         tela.onNodeWithText("Cancelar").performScrollTo().performClick()
