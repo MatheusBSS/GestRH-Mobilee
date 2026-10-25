@@ -1,0 +1,97 @@
+name: Gerar APK de testes
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publicar-apk.yml'
+      - 'app/**'
+      - 'gradle/**'
+      - '*.gradle.kts'
+      - 'gradle.properties'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  compilar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4
+      - name: Preparar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Preparar Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Instalar SDK necessário
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Compilar aplicativo e testes
+        run: bash gradlew :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug --console=plain
+      - name: Preparar download
+        run: |
+          mkdir -p entrega
+          cp app/build/outputs/apk/debug/app-debug.apk entrega/GestRH-Mobile-0.2.0-teste.apk
+          cd entrega
+          sha256sum GestRH-Mobile-0.2.0-teste.apk > SHA256SUMS.txt
+      - name: Guardar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-teste
+          path: entrega/
+          if-no-files-found: error
+      - name: Guardar relatórios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-compilacao
+          path: |
+            app/build/reports/
+            app/schemas/
+          if-no-files-found: ignore
+
+  publicar:
+    needs: compilar
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Obter APK
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-teste
+          path: entrega
+      - name: Publicar versão de testes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          COMMIT: ${{ github.sha }}
+          TAG: v0.2.0-teste.${{ github.run_number }}
+        run: |
+          cat > notas.md <<'NOTAS'
+          Versão de testes da Sprint 02: cadastro e edição de demandas, situações, funcionários e vínculos opcionais.
+
+          Baixe GestRH-Mobile-0.2.0-teste.apk abaixo. No Android, abra o arquivo e autorize a instalação pelo aplicativo usado para baixá-lo, se solicitado. Compatível com Android 8.0 ou superior.
+
+          O APK foi compilado e analisado pelo Android Lint. Os testes Android foram compilados, mas não executados neste workflow. A validação funcional no aparelho permanece pendente.
+
+          Esta compilação usa assinatura de depuração gerada pelo executor. Não é a assinatura definitiva: pode não atualizar uma instalação anterior, inclusive a instalada pelo Android Studio. Não desinstale uma versão com dados importantes; a desinstalação apaga os registros locais. Use esta versão com dados fictícios em um aparelho de testes. Uma assinatura permanente deverá ser configurada antes da distribuição para uso real.
+          NOTAS
+          printf '\nCommit: %s\n' "$COMMIT" >> notas.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo 'A versão desta execução já existe; nenhum arquivo será substituído.'
+          else
+            gh release create "$TAG" entrega/GestRH-Mobile-0.2.0-teste.apk entrega/SHA256SUMS.txt \
+              --target "$COMMIT" --title 'GestRH Mobile 0.2.0 — Testes da Sprint 02' \
+              --notes-file notas.md --prerelease
+          fi
