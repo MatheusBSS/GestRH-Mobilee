@@ -6,6 +6,25 @@ Uma demanda pode ser, por exemplo, conferir as férias de um funcionário ou aco
 
 Este é um projeto da disciplina **Programação Mobile Aplicada**, do curso de Análise e Desenvolvimento de Sistemas da **UniEVANGÉLICA**, no semestre 2026/2.
 
+## Baixar e instalar no celular
+
+A **versão de testes 0.2.0 da Sprint 02** está disponível para Android 8.0 ou superior. Não é necessário instalar o Android Studio para usar o APK.
+
+**[Baixar GestRH Mobile — APK (aproximadamente 10 MB)](https://github.com/MatheusBSS/GestRH-Mobilee/releases/download/v0.2.0-teste.4/GestRH-Mobile-0.2.0-teste.apk)**
+
+1. Abra este README no celular Android e toque no link acima.
+2. Após o download, abra o arquivo `GestRH-Mobile-0.2.0-teste.apk`.
+3. Se o Android solicitar, autorize a instalação pelo navegador ou gerenciador de arquivos usado para abrir o APK.
+4. Toque em **Instalar** e depois em **Abrir**.
+
+O download está na seção [Releases](https://github.com/MatheusBSS/GestRH-Mobilee/releases). Na [página desta versão](https://github.com/MatheusBSS/GestRH-Mobilee/releases/tag/v0.2.0-teste.4), o arquivo também aparece em **Assets**, junto do arquivo de verificação SHA256SUMS.txt. Os arquivos “Source code” contêm o código-fonte, não o instalador.
+
+Esta versão permite cadastrar e editar demandas, alterar sua situação, cadastrar e consultar funcionários e vincular uma demanda a um funcionário de forma opcional. Os registros ficam no armazenamento local do celular.
+
+**Use dados fictícios nesta etapa.** O APK usa uma assinatura de depuração e pode não atualizar uma instalação anterior, inclusive uma feita pelo Android Studio. Se ocorrer conflito de instalação, não desinstale o aplicativo caso tenha dados importantes: a desinstalação apaga os registros locais. A assinatura permanente ainda precisa ser configurada para a distribuição de uso real.
+
+A compilação do aplicativo e dos testes Android foi concluída, e o Android Lint passou sem erros na [execução que gerou este APK](https://github.com/MatheusBSS/GestRH-Mobilee/actions/runs/40147174226). Os testes automatizados foram compilados, mas não executados; a validação funcional no celular ou emulador permanece pendente.
+
 ## O que temos por enquanto
 
 A tela inicial tem o botão **Nova demanda**, que abre o formulário com título, observação, prazo e situação. O título e o prazo são obrigatórios; a data é escolhida no calendário. Prazos anteriores ao dia atual também são permitidos para registrar atividades já atrasadas.
@@ -14,7 +33,7 @@ O botão **Salvar demanda** grava os dados no Room. Durante a gravação, os cam
 
 A tela inicial lista as demandas por prazo, mostrando título, data, situação e observação. A lista acompanha as alterações do banco: ao salvar e voltar ao início, o registro deve aparecer automaticamente. Há mensagens distintas para carregamento, lista vazia e falha de consulta, com opção de tentar novamente.
 
-A compilação e os testes desta alteração ainda precisam ser confirmados no Android Studio.
+A compilação foi confirmada pelo GitHub Actions. A execução dos testes no Android ainda está pendente.
 
 ## Como abrir o projeto
 
@@ -22,7 +41,7 @@ Vamos usar o **Android Studio**, com **Kotlin** para o código e **Jetpack Compo
 
 1. No Android Studio, escolha **Get from VCS** ou **Clone Repository**.
 2. Cole o endereço: `https://github.com/MatheusBSS/GestRH-Mobilee.git`.
-3. Para acessar esta versão antes de ela entrar na `main`, selecione a branch `sprint-01` no menu do Git.
+3. Selecione a branch `main`, que reúne as alterações integradas.
 4. Abra a pasta que contém `settings.gradle.kts` e aguarde a sincronização.
 5. No **SDK Manager**, instale o Android SDK Platform 35 e o Build-Tools 35.0.0. Nas configurações do Gradle, selecione um **JDK 17**.
 6. Escolha um emulador ou celular Android e clique em **Run**.
@@ -85,7 +104,7 @@ Matheus ficará responsável pela implementação das telas, regras, armazenamen
 
 ## O que falta conferir nesta base
 
-A compilação foi tentada no ambiente de preparação, mas parou no download do Gradle por falta de acesso à rede. Por isso, ainda precisamos confirmar no Android Studio se o projeto sincroniza, compila e abre corretamente no celular ou emulador.
+A compilação foi concluída pelo GitHub Actions, incluindo o pacote de testes Android e a análise do Android Lint. Ainda precisamos executar os testes e confirmar o funcionamento no celular ou emulador.
 
 Ao executar, confira se o título e a mensagem inicial aparecem sem cortes, inclusive com a fonte do celular ampliada. Depois, guarde uma captura da tela e o link do commit para documentar o resultado no relatório.
 
