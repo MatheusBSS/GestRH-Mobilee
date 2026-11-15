@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.gestrh.mobile.apresentacao.listagem.FiltroDemandas
+import br.com.gestrh.mobile.apresentacao.listagem.lembrarDataAtual
 import br.com.gestrh.mobile.apresentacao.listagem.ListaDemandasViewModel
 import br.com.gestrh.mobile.R
 import br.com.gestrh.mobile.apresentacao.cadastro.CadastroDemandaViewModel
@@ -38,6 +40,9 @@ fun AplicativoGestRH(
     val cadastro: CadastroDemandaViewModel = viewModel { CadastroDemandaViewModel(fonteDados) }
     val lista: ListaDemandasViewModel = viewModel { ListaDemandasViewModel(fonteDados) }
     val estadoLista by lista.estado.collectAsStateWithLifecycle()
+    var busca by rememberSaveable { mutableStateOf("") }
+    var filtro by rememberSaveable { mutableStateOf(FiltroDemandas.TODAS) }
+    val hoje = lembrarDataAtual()
     var mostrandoCadastro by rememberSaveable { mutableStateOf(false) }
 
     val edicao: EdicaoDemandaViewModel = viewModel { EdicaoDemandaViewModel(fonteDados) }
@@ -96,6 +101,8 @@ fun AplicativoGestRH(
         )
     } else {
         TelaInicial(estado = estadoLista, funcionarios = estadoFuncionarios, aoTentarNovamente = lista::carregar,
+            busca = busca, filtro = filtro, hoje = hoje,
+            aoBuscar = { busca = it }, aoFiltrar = { filtro = it },
             aoFuncionarios = { mostrandoFuncionarios = true },
             aoEditarDemanda = { id ->
                 edicao.carregar(id)
