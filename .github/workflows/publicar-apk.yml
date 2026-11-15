@@ -2,6 +2,8 @@ name: Gerar APK de testes
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -40,13 +42,13 @@ jobs:
       - name: Instalar SDK necessário
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
       - name: Compilar aplicativo e testes
-        run: bash gradlew :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug --console=plain
+        run: bash gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug --console=plain
       - name: Preparar download
         run: |
           mkdir -p entrega
-          cp app/build/outputs/apk/debug/app-debug.apk entrega/GestRH-Mobile-0.2.0-teste.apk
+          cp app/build/outputs/apk/debug/app-debug.apk entrega/GestRH-Mobile-0.3.0-teste.apk
           cd entrega
-          sha256sum GestRH-Mobile-0.2.0-teste.apk > SHA256SUMS.txt
+          sha256sum GestRH-Mobile-0.3.0-teste.apk > SHA256SUMS.txt
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
@@ -65,7 +67,7 @@ jobs:
 
   publicar:
     needs: compilar
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -81,14 +83,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           COMMIT: ${{ github.sha }}
-          TAG: v0.2.0-teste.${{ github.run_number }}
+          TAG: v0.3.0-teste.${{ github.run_number }}
         run: |
           cat > notas.md <<'NOTAS'
-          Versão de testes da Sprint 02: cadastro e edição de demandas, situações, funcionários e vínculos opcionais.
+          Versão de testes da Sprint 03: destaque de vencidas, filtros, busca por título, resumo geral e ordenação por prazo, além do cadastro, edição e vínculo com funcionários.
 
-          Baixe GestRH-Mobile-0.2.0-teste.apk abaixo. No Android, abra o arquivo e autorize a instalação pelo aplicativo usado para baixá-lo, se solicitado. Compatível com Android 8.0 ou superior.
+          Baixe GestRH-Mobile-0.3.0-teste.apk abaixo. No Android, abra o arquivo e autorize a instalação pelo aplicativo usado para baixá-lo, se solicitado. Compatível com Android 8.0 ou superior.
 
-          O APK foi compilado e analisado pelo Android Lint. Os testes Android foram compilados, mas não executados neste workflow. A validação funcional no aparelho permanece pendente.
+          O APK foi compilado e analisado pelo Android Lint; os testes unitários das regras foram executados. Os testes de interface Android foram compilados, mas não executados neste workflow. A validação visual e funcional desta versão no aparelho permanece pendente.
 
           Esta compilação usa assinatura de depuração gerada pelo executor. Não é a assinatura definitiva: pode não atualizar uma instalação anterior, inclusive a instalada pelo Android Studio. Não desinstale uma versão com dados importantes; a desinstalação apaga os registros locais. Use esta versão com dados fictícios em um aparelho de testes. Uma assinatura permanente deverá ser configurada antes da distribuição para uso real.
           NOTAS
@@ -96,7 +98,7 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo 'A versão desta execução já existe; nenhum arquivo será substituído.'
           else
-            gh release create "$TAG" entrega/GestRH-Mobile-0.2.0-teste.apk entrega/SHA256SUMS.txt \
-              --target "$COMMIT" --title 'GestRH Mobile 0.2.0 — Testes da Sprint 02' \
+            gh release create "$TAG" entrega/GestRH-Mobile-0.3.0-teste.apk entrega/SHA256SUMS.txt \
+              --target "$COMMIT" --title 'GestRH Mobile 0.3.0 — Testes da Sprint 03' \
               --notes-file notas.md --prerelease
           fi

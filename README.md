@@ -23,9 +23,19 @@ Esta versão permite cadastrar e editar demandas, alterar sua situação, cadast
 
 **Use dados fictícios nesta etapa.** O APK usa uma assinatura de depuração e pode não atualizar uma instalação anterior, inclusive uma feita pelo Android Studio. Se ocorrer conflito de instalação, não desinstale o aplicativo caso tenha dados importantes: a desinstalação apaga os registros locais. A assinatura permanente ainda precisa ser configurada para a distribuição de uso real.
 
-A compilação do aplicativo e dos testes Android foi concluída, e o Android Lint passou sem erros na [execução que gerou este APK](https://github.com/MatheusBSS/GestRH-Mobilee/actions/runs/40147174226). Os testes automatizados foram compilados, mas não executados; a validação funcional no celular ou emulador permanece pendente.
+A compilação da versão 0.2.0 e o Android Lint passaram na [execução que gerou o APK da Sprint 02](https://github.com/MatheusBSS/GestRH-Mobilee/actions/runs/40147174226). Matheus confirmou os testes manuais dessa versão em 25/10/2026 no emulador e no Redmi Note 14 Pro 5G. Essa confirmação não se estende automaticamente à versão da Sprint 03.
 
-## O que temos por enquanto
+## Novidades da Sprint 03
+
+O código da versão 0.3.0 mostra **Vencida** quando a demanda tem prazo anterior ao dia atual e ainda não foi concluída. O aviso acompanha a data local e não muda a situação da atividade.
+
+A tela inicial permite filtrar por situação ou atraso e buscar parte do título, ignorando maiúsculas e acentos. Busca e filtro funcionam juntos, mantendo os prazos mais antigos primeiro e usando o ID como desempate. Ao voltar da edição ou girar o aparelho, a seleção é preservada.
+
+O resumo apresenta os totais gerais de pendentes, em andamento, concluídas e vencidas. Ele não muda com o filtro: as vencidas também estão nas situações pendente ou em andamento e não devem ser somadas como uma quarta situação.
+
+A estrutura do banco não foi alterada. Veja o [roteiro de testes da Sprint 03](documentacao/Testes-Sprint-03.md) para conferir a nova versão no celular. A validação com Samara e os testes visuais desta versão ainda precisam ser realizados.
+
+## Cadastro e consulta
 
 A tela inicial tem o botão **Nova demanda**, que abre o formulário com título, observação, prazo e situação. O título e o prazo são obrigatórios; a data é escolhida no calendário. Prazos anteriores ao dia atual também são permitidos para registrar atividades já atrasadas.
 
@@ -33,7 +43,7 @@ O botão **Salvar demanda** grava os dados no Room. Durante a gravação, os cam
 
 A tela inicial lista as demandas por prazo, mostrando título, data, situação e observação. A lista acompanha as alterações do banco: ao salvar e voltar ao início, o registro deve aparecer automaticamente. Há mensagens distintas para carregamento, lista vazia e falha de consulta, com opção de tentar novamente.
 
-A compilação foi confirmada pelo GitHub Actions. A execução dos testes no Android ainda está pendente.
+Os testes manuais das sprints anteriores foram relatados como aprovados. Os testes instrumentados Android existentes não foram declarados executados.
 
 ## Como abrir o projeto
 
@@ -48,7 +58,7 @@ Vamos usar o **Android Studio**, com **Kotlin** para o código e **Jetpack Compo
 
 Na primeira abertura, o Android Studio precisa de internet para baixar as dependências. Para testar em um celular, é necessário habilitar a depuração USB e autorizar a conexão com o computador.
 
-A base usa Android Gradle Plugin 8.9.2, Gradle 8.11.1, Kotlin 2.1.20 e Compose BOM 2025.04.01. Use Android Studio compatível com AGP 8.9, como Meerkat 2024.3.1. O Android mínimo está configurado como 8.0 (API 26); ainda vamos confirmar a versão do aparelho usado na validação.
+A base usa Android Gradle Plugin 8.9.2, Gradle 8.11.1, Kotlin 2.1.20 e Compose BOM 2025.04.01. Use Android Studio compatível com AGP 8.9, como Meerkat 2024.3.1. O Android mínimo está configurado como 8.0 (API 26); o Redmi Note 14 Pro 5G foi identificado com Android 15 na captura fornecida em 01/11/2026.
 
 ## Onde encontrar cada parte
 
@@ -104,7 +114,7 @@ Matheus ficará responsável pela implementação das telas, regras, armazenamen
 
 ## O que falta conferir nesta base
 
-A compilação foi concluída pelo GitHub Actions, incluindo o pacote de testes Android e a análise do Android Lint. Ainda precisamos executar os testes e confirmar o funcionamento no celular ou emulador.
+A Sprint 03 deve passar pela compilação, Android Lint e testes unitários das regras no GitHub Actions. A execução visual e os fluxos completos no celular ou emulador devem seguir o roteiro desta sprint; não confundir esse teste com a aprovação manual das versões anteriores.
 
 Ao executar, confira se o título e a mensagem inicial aparecem sem cortes, inclusive com a fonte do celular ampliada. Depois, guarde uma captura da tela e o link do commit para documentar o resultado no relatório.
 
