@@ -1,0 +1,58 @@
+name: Capturar telas reais da Sprint 03
+
+on:
+  push:
+    branches: [capturas-sprint-03]
+    paths:
+      - 'app/src/androidTest/**'
+      - '.github/workflows/capturar-telas.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  capturar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4
+      - name: Preparar Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Preparar Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Habilitar virtualização do emulador
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Compilar aplicativo e teste de captura
+        run: bash gradlew :app:assembleDebug :app:assembleDebugAndroidTest --console=plain
+      - name: Executar aplicativo e capturar telas
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            mkdir -p evidencias
+            adb shell wm size 1080x2400
+            adb shell wm density 360
+            adb shell getprop ro.build.version.release > evidencias/android.txt
+            adb shell date > evidencias/data-emulador.txt
+            bash gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=br.com.gestrh.mobile.apresentacao.CapturasSprint03Test --console=plain; resultado=$?; adb pull /sdcard/Android/data/br.com.gestrh.mobile/files/capturas-sprint03 evidencias/ || true; exit "$resultado"
+      - name: Guardar capturas e resultados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturas-reais-sprint03
+          path: |
+            evidencias/
+            app/build/reports/androidTests/
+            app/build/outputs/androidTest-results/
+          if-no-files-found: error
