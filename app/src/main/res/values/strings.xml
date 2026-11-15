@@ -50,4 +50,21 @@
     <string name="funcionario_indisponivel">Funcionário indisponível</string>
     <string name="funcionario_lista">Funcionário: %1$s</string>
     <string name="cadastre_funcionario_depois">Você pode salvar sem vínculo. Para associar uma pessoa, cadastre-a na tela Funcionários.</string>
+    <string name="buscar_demandas">Buscar pelo título</string>
+    <string name="limpar_busca">Limpar</string>
+    <string name="filtro_todas">Todas</string>
+    <string name="filtro_pendentes">Pendentes</string>
+    <string name="filtro_concluidas">Concluídas</string>
+    <string name="filtro_vencidas">Vencidas</string>
+    <string name="demanda_vencida">Vencida</string>
+    <string name="ordem_demandas">Prazo mais antigo primeiro</string>
+    <string name="nenhum_resultado">Nenhuma demanda encontrada</string>
+    <string name="rever_busca_filtros">Tente outro título ou selecione um filtro diferente.</string>
+    <string name="limpar_busca_filtros">Limpar busca e filtros</string>
+    <string name="resumo_demandas">Resumo geral</string>
+    <string name="resumo_pendentes">Pendentes: %1$d</string>
+    <string name="resumo_andamento">Em andamento: %1$d</string>
+    <string name="resumo_concluidas">Concluídas: %1$d</string>
+    <string name="resumo_vencidas">Vencidas: %1$d</string>
+    <string name="explicacao_resumo">Totais de todas as demandas. As vencidas também estão entre as pendentes ou em andamento.</string>
 </resources>
